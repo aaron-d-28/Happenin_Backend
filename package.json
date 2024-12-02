@@ -1,0 +1,11 @@
+{
+  "name": "backend_happenin",
+  "version": "1.0.0",
+  "description": "this project is used to build the backend for our happening app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aaron",
+  "license": "ISC"
+}
