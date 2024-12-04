@@ -14,7 +14,7 @@ const Schedulerschema = new Schema({
     lowercase: true,
     trim: true,
   },
-  commision: {
+  commission: {
     type: Number,
     required: [true, "Commission is required"],
     validate: {
@@ -24,7 +24,7 @@ const Schedulerschema = new Schema({
     min: [0, "Percentage cannot be less than 0"],
     max: [100, "Percentage cannot exceed 100"],
   },
-  authorizer: {
+  authorizeremail: {
     type: Schema.Types.ObjectId,
     ref: "Admin",
     required: [true, "Authorizer is required"],
@@ -33,6 +33,11 @@ const Schedulerschema = new Schema({
     type: String,
     required: [true, "Password is required"],
   },
+  email:{
+    type: String,
+    required: [true, "email is required"],
+    unique:true
+  }
 });
 
 Schedulerschema.pre("save", async function (next) {
@@ -51,5 +56,7 @@ Schedulerschema.pre("save", async function (next) {
 Schedulerschema.methods.isPasswordcorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };  
+
+
 
 export const Scheduler=mongoose.model("Scheduler", Schedulerschema);
