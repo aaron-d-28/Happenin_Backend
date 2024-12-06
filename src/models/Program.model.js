@@ -7,7 +7,7 @@ const programschema = new Schema({
     required: [true, "Program type is required"],
     index: true,
   },
-  programAuthorizer: {
+  programAuthorizeremail: {
     type: Schema.Types.ObjectId,
     ref: "Scheduler",
     required: [true, "Authorizer is required"],
@@ -21,18 +21,21 @@ const programschema = new Schema({
     required: [true, "Suburb location is required"],
     trim: true,
     index: true,
+    lowercase:true
   },
   location_city: {
     type: String,
     required: [true, "City location is required"],
     trim: true,
     index: true,
+    lowercase:true
   },
   location_state: {
     type: String,
     required: [true, "State location is required"],
     trim: true,
     index: true,
+    lowercase:true
   },
   direction: {
     type: String,
@@ -41,11 +44,9 @@ const programschema = new Schema({
   },
   current_users: {
     type: Number,
-    required: [true, "Current users count is required"],  // Optional field but can be required if necessary
   },
   total_users: {
     type: Number,
-    required: [true, "Total users count is required"],  // Optional field but can be required if necessary
   },
   price: {
     type: Number,

@@ -48,7 +48,7 @@ const Loginadmin = asyncHandler(async (req, res) => {
   const options={
     httpOnly: true,
     secure: true,
-  }
+  } 
 
   return res
   .cookie("accesstoken",accessToken,options)

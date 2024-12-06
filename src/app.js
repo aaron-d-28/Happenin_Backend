@@ -14,13 +14,13 @@ app.use(express.urlencoded({extended:true,limit:"16kb"}))  //Means encodes the d
 app.use(express.static("public"))//Means tells us which folder holds images used in cloudinary multer stuff
 app.use(cookieParser()) 
 
-//note routes import
-import userRouter from "./routes/user.routes.js"
+// //note routes import
+// import userRouter from "./routes/user.routes.js"
 
 
 
-//Note routes Declaration
-app.use("/api/v1/users",userRouter)
+// //Note routes Declaration
+// app.use("/api/v1/users",userRouter)
 
 
 export {app}

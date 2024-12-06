@@ -37,6 +37,9 @@ const Schedulerschema = new Schema({
     type: String,
     required: [true, "email is required"],
     unique:true
+  },
+  refreshtoken:{
+    type:String
   }
 });
 
@@ -57,6 +60,27 @@ Schedulerschema.methods.isPasswordcorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };  
 
+
+Schedulerschema.methods.GenerateAccessToken=function(){
+  return jwt.sign({
+      _id:this._id ,
+      email:this.email,
+      name:this.name
+  },
+  process.env.ACCESS_TOKEN_SECRET,
+  { expiresIn:process.env.ACCESS_TOKEN_EXPIRY}
+)
+}
+Schedulerschema.methods.GenerateRefreshToken=function(){
+  return jwt.sign({
+      _id:this._id ,
+      
+  },
+  process.env.REFRESH_TOKEN_SECRET,
+  { expiresIn:process.env.REFRESH_TOKEN_EXPIRY}
+)
+
+}
 
 
 export const Scheduler=mongoose.model("Scheduler", Schedulerschema);
