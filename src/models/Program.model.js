@@ -58,10 +58,17 @@ const programschema = new Schema({
     trim: true,
   },
   img_src: {
-    type: String,
-    required: [true, "Image source is required"],
+    type: [String],
+    required: [true, "At least one image source is required"],
+    validate: {
+      validator: function (value) {
+        return value.length > 0; // Ensure the array is not empty
+      },
+      message: "At least one image source is required",
+    },
     trim: true,
   },
+  
 });
 
 export const Program = mongoose.model("Program", programschema);

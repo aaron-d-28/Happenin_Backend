@@ -13,7 +13,7 @@ import fs from "fs";
   const uploadonCloudinary = async(LocalFilePath)=>{ 
     try {
         if (!LocalFilePath) return null
-        const uploadresult=await cloudinary.uploader.upload(LocalFilePath,{resource_type:"auto"})
+        const uploadresult=await cloudinary.uploader.upload(LocalFilePath,{resource_type:"auto",folder:"Happenin"})
   console.log("File has been uploaded successfully!!!!!! ",uploadresult.url)
   fs.unlinkSync(LocalFilePath)
   return uploadresult
@@ -23,4 +23,26 @@ import fs from "fs";
         return null
     }
   }
-export {uploadonCloudinary}
+
+  const uploadonCloudinary_multiple=async(Multipleimgs)=>{
+   try {
+    const validFiles = Multipleimgs.filter(Multipleimgs => Multipleimgs.path);
+     const multipleuploadpromise=validFiles.map(singleimg=>{
+       return cloudinary.uploader.upload(singleimg.path,{
+         folder:"Happenin"
+       })
+     })
+     const uploadedimgs=await Promise.all(multipleuploadpromise)
+
+     const uploadedurls=uploadedimgs.map(result=>result.secure_url)
+
+     uploadedurls.forEach(url=>console.log(`Uploaded img:${url}`))
+     return uploadedurls
+   } catch (error) {
+    console.error("Error uploading to Cloudinary:", error);
+    throw error; // Rethrow error for the caller to handle
+ 
+   }
+
+  }
+export {uploadonCloudinary,uploadonCloudinary_multiple}
