@@ -96,3 +96,51 @@ let EventImgsSrc=""
     .json(new ApiResponse(200,programcreated,"Lesgooooooo created the entryyy!!!!"))
 
 })
+
+const updateprogram=asyncHandler(async(req,res)=>{
+    const {
+        _id, 
+        type,
+        programAuthorizeremail,
+        pincode,
+        location_suburb,
+        location_city,
+        location_state,
+        direction,
+        price,
+        description,}=req.body
+        
+        const oldprog=req.body
+
+        if (!_id) {
+            throw new ApiError(400,"Send atleast the id of the program to update")
+        }
+
+        const updatedfield={ type  : type?.trim() || program.type  ,
+            programAuthorizeremail  : programAuthorizeremail?.trim() || program.programAuthorizeremail  ,
+            pincode  : pincode?.trim() || program.pincode  ,
+            location_suburb  : location_suburb?.trim() || program.location_suburb  ,
+            location_city  : location_city?.trim() || program.location_city  ,
+            location_state  : location_state?.trim() || program.location_state  ,
+            direction  : direction?.trim() || program.direction  ,
+            price  : price?.trim() || program.price  ,
+            description  : description?.trim() || program.description  ,}
+        
+        const updatedprogram=await Program.findByIdAndUpdate(_id,
+            {$set:updatedfield},
+            { new: true, runValidators: true }
+        )
+
+
+        if (!updatedProgram) {
+        throw new ApiError(500, "Failed to update the program");
+        }
+
+        res.status(200).json({
+            message: "Program updated successfully this is the new program",
+            program: updatedProgram,
+        });
+
+        //steps how do we know what thing we r updating req.some? or do we get the id from there 
+        
+})
