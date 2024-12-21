@@ -28,10 +28,11 @@ export const  verifyJWT=asyncHandler(async (req,res,next)=>{
 })
 
 export const  verifyadminJWT=asyncHandler(async (req,res,next)=>{
+   if (!req.Admin) {
     try {
         const token=req.cookies?.accesstoken || req.header("Authorization")?.replace("Bearer ","")
         if (!token) {
-            throw new ApiError(401,"No such token found??")
+            throw new ApiError(401,"No such token found?? login first")
     
         }
         const decodedToken=JWT.verify(token,process.env.ACCESS_TOKEN_SECRET)
@@ -42,10 +43,17 @@ export const  verifyadminJWT=asyncHandler(async (req,res,next)=>{
             throw new ApiError(400,"Invalid token")//todo Discuss about frontend
         }
         req.Admin=user;
+        console.log(`req.admin is ${req.Admin.name}`)
         next()
     } catch (error) {
         throw new ApiError(401,error?.message || "Invalid access token")
     }
+   }
+   else
+   {
+    console.log("User admin already exists logged in")
+    next()
+   }
 })
 
 

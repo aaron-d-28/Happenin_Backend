@@ -1,10 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 
+import jwt from "jsonwebtoken";
 const Schedulerschema = new Schema({
   type: {
     type: String,
-    enum: ["Govt", "Public", "Business"],
+    enum: ["Govt", "Public", "Business", "Test"],
     required: [true, "Type is required"],
     index: true,
   },
@@ -24,23 +25,22 @@ const Schedulerschema = new Schema({
     min: [0, "Percentage cannot be less than 0"],
     max: [100, "Percentage cannot exceed 100"],
   },
-  authorizeremail: {
+  authorizerid: {
     type: Schema.Types.ObjectId,
     ref: "Admin",
-    required: [true, "Authorizer is required"],
   },
   password: {
     type: String,
     required: [true, "Password is required"],
   },
-  email:{
+  email: {
     type: String,
     required: [true, "email is required"],
-    unique:true
+    unique: true,
   },
-  refreshtoken:{
-    type:String
-  }
+  refreshtoken: {
+    type: String,
+  },
 });
 
 Schedulerschema.pre("save", async function (next) {
@@ -58,29 +58,35 @@ Schedulerschema.pre("save", async function (next) {
 
 Schedulerschema.methods.isPasswordcorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
-};  
+};
 
+Schedulerschema.methods.GenerateAccessToken = function () {
+  try {
+    return jwt.sign(
+      {
+        _id: this._id,
+        email: this.email,
+        name: this.name,
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+    );
+  } catch (error) {
+    console.log("Error is in access",error)
+  }
+};
+Schedulerschema.methods.GenerateRefreshToken = function () {
+  try {
+    return jwt.sign(
+      {
+        _id: this._id,
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+    );
+  } catch (error) {
+    console.log("Error is in refresh",error)
+  }
+};
 
-Schedulerschema.methods.GenerateAccessToken=function(){
-  return jwt.sign({
-      _id:this._id ,
-      email:this.email,
-      name:this.name
-  },
-  process.env.ACCESS_TOKEN_SECRET,
-  { expiresIn:process.env.ACCESS_TOKEN_EXPIRY}
-)
-}
-Schedulerschema.methods.GenerateRefreshToken=function(){
-  return jwt.sign({
-      _id:this._id ,
-      
-  },
-  process.env.REFRESH_TOKEN_SECRET,
-  { expiresIn:process.env.REFRESH_TOKEN_EXPIRY}
-)
-
-}
-
-
-export const Scheduler=mongoose.model("Scheduler", Schedulerschema);
+export const Scheduler = mongoose.model("Scheduler", Schedulerschema);

@@ -15,12 +15,12 @@ app.use(express.static("public"))//Means tells us which folder holds images used
 app.use(cookieParser()) 
 
 // //note routes import
-// import userRouter from "./routes/user.routes.js"
-
-
-
+import adminrouter from "./Routes/admin.routes.js";
 // //Note routes Declaration
-// app.use("/api/v1/users",userRouter)
+app.use("/api/v1/admin",adminrouter)
+
+import SchedulerrRouter from "./Routes/scheduler.routes.js"
+app.use("/api/v1/Scheduler",SchedulerrRouter)
 
 
 export {app}

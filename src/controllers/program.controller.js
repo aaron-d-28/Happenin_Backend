@@ -110,7 +110,6 @@ const updateprogram=asyncHandler(async(req,res)=>{
         price,
         description,}=req.body
         
-        const oldprog=req.body
 
         if (!_id) {
             throw new ApiError(400,"Send atleast the id of the program to update")
@@ -144,3 +143,4 @@ const updateprogram=asyncHandler(async(req,res)=>{
         //steps how do we know what thing we r updating req.some? or do we get the id from there 
         
 })
+export {addprogram,updateprogram}
