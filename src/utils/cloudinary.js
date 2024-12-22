@@ -1,7 +1,20 @@
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
+import fs from "fs/promises";
 
-
+const Deletefiles=async(filePaths)=>{
+  await Promise.all(
+    filePaths.map(async (filePath) => {
+      try {
+        const exists = await fs.stat(filePath);
+        await fs.unlink(filePath);
+        console.log(`Deleted local file: ${filePath}`);
+      } catch (unlinkError) {
+        console.error(`Failed to delete local file: ${filePath}`, unlinkError);
+      }
+    })
+  );
+  
+}
   // Configuration
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CODE_NAME,
@@ -12,6 +25,7 @@ import fs from "fs";
 
   const uploadonCloudinary = async(LocalFilePath)=>{ 
     try {
+      console.log(`File links are for cloudinary:`)
         if (!LocalFilePath) return null
         const uploadresult=await cloudinary.uploader.upload(LocalFilePath,{resource_type:"auto",folder:"Happenin"})
   console.log("File has been uploaded successfully!!!!!! ",uploadresult.url)
@@ -25,24 +39,33 @@ import fs from "fs";
   }
 
   const uploadonCloudinary_multiple=async(Multipleimgs)=>{
-   try {
-    const validFiles = Multipleimgs.filter(Multipleimgs => Multipleimgs.path);
-     const multipleuploadpromise=validFiles.map(singleimg=>{
-       return cloudinary.uploader.upload(singleimg.path,{
-         folder:"Happenin"
-       })
-     })
-     const uploadedimgs=await Promise.all(multipleuploadpromise)
+  try {
 
-     const uploadedurls=uploadedimgs.map(result=>result.secure_url)
+    console.log(`File links are for cloudinary:`,Multipleimgs)
+    const validFiles = Multipleimgs
+    const multipleuploadpromise=validFiles.map(singleimg=>{
+      return cloudinary.uploader.upload(singleimg,{
+        folder:"Happenin"
+      })
+    });
 
-     uploadedurls.forEach(url=>console.log(`Uploaded img:${url}`))
-     return uploadedurls
-   } catch (error) {
-    console.error("Error uploading to Cloudinary:", error);
+    const uploadedimgs=await Promise.all(multipleuploadpromise)
+
+    const uploadedurls=uploadedimgs.map((result)=>result.secure_url)
+
+    uploadedurls.forEach(url=>console.log(`Uploaded img:${url}`))
+    
+   console.log("Deleting the files due to success")
+   Deletefiles(Multipleimgs)
+    return uploadedurls
+  } catch (error) {
+    console.log("Error uploading to Cloudinary:", error); 
+     
+    console.log("Deleting the files due to failure")
+    Deletefiles(Multipleimgs)
     throw error; // Rethrow error for the caller to handle
- 
-   }
+
+  }
 
   }
 export {uploadonCloudinary,uploadonCloudinary_multiple}

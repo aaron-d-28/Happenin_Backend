@@ -20,7 +20,10 @@ import adminrouter from "./Routes/admin.routes.js";
 app.use("/api/v1/admin",adminrouter)
 
 import SchedulerrRouter from "./Routes/scheduler.routes.js"
+import { addprogram } from "./controllers/program.controller.js";
 app.use("/api/v1/Scheduler",SchedulerrRouter)
 
+import Programrouter from "./Routes/program.routes.js";
+app.use("/api/v1/Program",Programrouter)
 
 export {app}

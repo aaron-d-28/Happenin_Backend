@@ -1,5 +1,18 @@
-  // note const upload = multer({ dest: "uploads/" });
+import { addprogram,updateprogram } from "../controllers/program.controller.js";
+import {  Router} from "express";
+import {verifyschedulerJWT} from "../middlewares/auth.middleware.js"
+import { upload } from "../middlewares/multer.middleware.js";
 
-// Note app.post("/upload", upload.array("avatar", 10), (req, res) => {
-// Note     // Handle the uploaded files
-// Note   });
+const Programrouter=Router()
+
+Programrouter.route("/Addprogram").post(verifyschedulerJWT,upload.fields([
+    {name:"images",maxCount:4},
+    
+]),
+addprogram
+)
+
+Programrouter.route("/Update").post(verifyschedulerJWT,updateprogram)
+
+
+export default Programrouter

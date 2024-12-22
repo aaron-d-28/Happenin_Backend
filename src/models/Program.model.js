@@ -3,14 +3,13 @@ import mongoose, { Schema } from "mongoose";
 const programschema = new Schema({
   type: {
     type: String,
-    enum: ["Govt", "Business", "Public"],
+    enum: ["Govt", "Business", "Public","Test"],
     required: [true, "Program type is required"],
     index: true,
   },
-  programAuthorizeremail: {
+  programAuthorizerid: {
     type: Schema.Types.ObjectId,
     ref: "Scheduler",
-    required: [true, "Authorizer is required"],
   },
   pincode:{
     type:String,

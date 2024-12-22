@@ -4,7 +4,7 @@ import { verifyschedulerJWT } from "../middlewares/auth.middleware.js";
 
 const SchedulerrRouter=Router()
 
-SchedulerrRouter.route("/login").post(Loginscheduler,verifyschedulerJWT)
-SchedulerrRouter.route("/logout").post(logoutscheduler)
+SchedulerrRouter.route("/login").post(Loginscheduler)
+SchedulerrRouter.route("/logout").post(verifyschedulerJWT,logoutscheduler)
 
 export default SchedulerrRouter

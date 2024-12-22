@@ -4,13 +4,12 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Scheduler } from "../models/Scheduler.model.js";
 import { Program } from "../models/Program.model.js";
 import { uploadonCloudinary, uploadonCloudinary_multiple } from "../utils/cloudinary.js";
-
+import mongoose from "mongoose";
 const addprogram=asyncHandler(async(req,res)=>{
     // note add multer and clpudinary to upload program img 
     // note later work on further things
     const {
         type,
-        programAuthorizeremail,
         pincode,
         location_suburb,
         location_city,
@@ -22,7 +21,6 @@ const addprogram=asyncHandler(async(req,res)=>{
         
       [
         { name: "type", value: type },
-        { name: "programAuthorizeremail", value: programAuthorizeremail },
         { name: "pincode", value: pincode },
         { name: "location_suburb", value: location_suburb },
         { name: "location_city", value: location_city },
@@ -54,7 +52,7 @@ const addprogram=asyncHandler(async(req,res)=>{
         throw new ApiError(400,"A business can only add 1 event")
     }
 
-    const avatarPaths=req.files?.avatar
+    const avatarPaths=req.files?.images
 
     if (!avatarPaths || avatarPaths.length===0) {
         throw new ApiError(400,"Atleast send one file")
@@ -63,7 +61,7 @@ let EventImgsSrc=""
     try {
         
         const avatarlocalpaths=avatarPaths.map(file=>file.path)
-        console.log("Multiple files that were uploaded were")
+        console.log("Multiple files that were uploaded were",avatarlocalpaths)
         EventImgsSrc=await  uploadonCloudinary_multiple(avatarlocalpaths)
         
     } catch (error) {
@@ -72,12 +70,12 @@ let EventImgsSrc=""
         
     }
 
-    console.log(`All the uploaded imgs are:${EventImgsSrc}`)
+    console.log(`All the uploaded imgsurl are:${EventImgsSrc}`)
   
     const programcreated=await Program.create({
 
         type,
-        programAuthorizeremail,
+        programAuthorizerid:req.scheduler._id,
         pincode,
         location_suburb,
         location_city,
@@ -101,7 +99,7 @@ const updateprogram=asyncHandler(async(req,res)=>{
     const {
         _id, 
         type,
-        programAuthorizeremail,
+        programAuthorizerid,
         pincode,
         location_suburb,
         location_city,
@@ -110,13 +108,26 @@ const updateprogram=asyncHandler(async(req,res)=>{
         price,
         description,}=req.body
         
-
         if (!_id) {
             throw new ApiError(400,"Send atleast the id of the program to update")
         }
+        const program=await Program.findOne(
+            {
+                _id:_id
+            }
+        )
+
+        if (program.programAuthorizerid.toString()!=req.scheduler._id.toString()) {
+            throw new ApiError(400,`${program.programAuthorizerid} and ${req.scheduler._id} dont have that authority`)
+        }
+
+
+        if (!program) {
+            throw new ApiError(400,`No program with the program ${_id} id `)
+        }
 
         const updatedfield={ type  : type?.trim() || program.type  ,
-            programAuthorizeremail  : programAuthorizeremail?.trim() || program.programAuthorizeremail  ,
+            programAuthorizerid  : programAuthorizerid?.trim() || program.programAuthorizerid  ,
             pincode  : pincode?.trim() || program.pincode  ,
             location_suburb  : location_suburb?.trim() || program.location_suburb  ,
             location_city  : location_city?.trim() || program.location_city  ,
@@ -125,19 +136,21 @@ const updateprogram=asyncHandler(async(req,res)=>{
             price  : price?.trim() || program.price  ,
             description  : description?.trim() || program.description  ,}
         
+            // console.log(updatedfield)
+
         const updatedprogram=await Program.findByIdAndUpdate(_id,
             {$set:updatedfield},
             { new: true, runValidators: true }
         )
 
 
-        if (!updatedProgram) {
-        throw new ApiError(500, "Failed to update the program");
+        if (!updatedprogram) {
+        throw new ApiError(500, "Failed to update the program for ",updatedprogram);
         }
 
         res.status(200).json({
             message: "Program updated successfully this is the new program",
-            program: updatedProgram,
+            program: updatedprogram,
         });
 
         //steps how do we know what thing we r updating req.some? or do we get the id from there 
