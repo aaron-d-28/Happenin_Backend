@@ -8,6 +8,8 @@ import e from "express";
 
 //note this is seen in the admin panel therefore scheduler is set in admin controller
 const test=asyncHandler(async(req,res)=>{
+  const {val}=req.body
+  console.log(req)
   res.status(200).json(new ApiResponse(200,{},"Connecction success"))
 })
 

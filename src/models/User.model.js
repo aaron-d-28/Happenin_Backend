@@ -1,12 +1,15 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs"
-const userschema = new Schema(
-  {
+const userschema = new Schema({
     username: {
       type: String,
       required: [true, "Username is required"],
       trim: true,
     },
+    userimage:{
+      type:String,
+      trim:true,
+    },  
     fullname: {
       type: String,
       required: [true, "Full name is required"],
@@ -42,7 +45,10 @@ const userschema = new Schema(
     password:{
         type:String,
         required:[true,"Password is required"],
-    }
+    },
+        refreshToken:{
+        type:String,
+        }
   },
   { timestamps: true }
 );

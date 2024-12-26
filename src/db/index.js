@@ -7,7 +7,7 @@ const connectDB=async ()=>{
         console.log(`\nMongoDB connected aaron!!! DB Host:${connectionInstance.connection.host}`);
         
     } catch (error) {
-        console.log("AAron mongo db is connection error:",error)
+        console.log("Aaron mongo db is connection error: probable cause is no wifi",error)
         process.exit(1)
     }
 }
