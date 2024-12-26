@@ -102,7 +102,7 @@ const {accessToken,refreshToken}=GenerateAccessandRefreshToken(userfound._id)
       .cookie("refreshtoken",refreshToken,options)
       .status(200)
       .json(
-          new ApiResponse(200,{currentloggedinuser,accessToken,refreshToken},"user logged in success")
+          new ApiResponse(200,{currentloggedinuser,accessToken,refreshToken},"user logged in successful")
       )
 
 
