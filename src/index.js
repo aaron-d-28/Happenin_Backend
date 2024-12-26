@@ -1,7 +1,7 @@
 import express from "express";
 import connectDB from "./db/index.js";
 import dotenv from 'dotenv'
-
+import {Apollo} from "../src/Graphql/Apollo.server.js"
 import {app} from './app.js'
 dotenv.config({
     path:'./.env'
@@ -15,7 +15,7 @@ connectDB()
 .catch((err)=>{
     console.log("Mongo db connection has failed aaron:",err)
 })
-
+Apollo()
 
 
 
