@@ -46,6 +46,10 @@ const userschema = new Schema({
         type:String,
         required:[true,"Password is required"],
     },
+    DOB:{
+        type:Date,
+        required:[true,"Date of birth is required"],
+    },
         refreshToken:{
         type:String,
         }
@@ -54,9 +58,7 @@ const userschema = new Schema({
 );
 userschema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
-  
     // console.log("Plain password:", this.password);  // Check the value of `this.password`
-  
     try {
       this.password = await bcrypt.hash(this.password, 10);
       next();

@@ -75,7 +75,7 @@ adminschema.methods.GenerateRefreshToken=function(){
      { expiresIn:process.env.REFRESH_TOKEN_EXPIRY}
  )
    } catch (error) {
-    
+
     console.log("Error in refresh",error)
    }
 

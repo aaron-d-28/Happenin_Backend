@@ -6,8 +6,8 @@ import { upload } from "../middlewares/multer.middleware.js";
 import { uploadonCloudinary } from "../utils/cloudinary.js";
 import {Admin} from "../models/Admin.model.js";
 
-
-
+//steps when writing the insert booking remember to enter  +530 for everytime inserted query because it is witout time zone
+// steps rather just use a js library for that time stuff
 const GenerateAccessandRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -29,11 +29,11 @@ const GenerateAccessandRefreshToken = async (userId) => {
 };
 
 const registeruser = asyncHandler(async (req, res) => {
-  const { username, password, fullname, email, phone, user_location } =
+  const { username, password, fullname, email, phone, user_location ,DOB} =
     req.body();
 
   if (
-    [username, password, fullname, email, phone, user_location].some(
+    [username, password, fullname, email, phone, user_location,DOB].some(
       (item) => item.trim() === ""
     )
   ) {
@@ -58,7 +58,7 @@ const registeruser = asyncHandler(async (req, res) => {
 
 
   const user=await User.create({
-    username, password, fullname, email, phone, user_location ,userimage:imageurl
+    username, password, fullname, email, phone, user_location ,userimage:imageurl,DOB
   })
 
   const userfound=await User.findById(user._id).select("-password")

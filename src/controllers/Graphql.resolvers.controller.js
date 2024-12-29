@@ -1,5 +1,8 @@
-import {Program} from "./Program.model.js";
+import {Program} from "../models/Program.model.js";
 import {ApiError} from "../utils/ApiError.js";
+import {User} from "../models/User.model.js";
+import {Scheduler} from "../models/Scheduler.model.js";
+import {Employee} from "../models/Employee.model.js";
 
 const fetchPrograms = async (filter, errorMessage) => {
     try {
@@ -13,16 +16,6 @@ const fetchPrograms = async (filter, errorMessage) => {
 export  const resolvers = {
     Query: {
         getPrograms: () => fetchPrograms({}, "Failed to fetch programs"),
-        getProgramid: async (_, { id }) => {
-            try {
-                const program = await Program.findById(id);
-                if (!program) throw new ApiError(404, "Program not found");
-                return program;
-            } catch (error) {
-                console.error("Error fetching program by ID:", error);
-                throw new ApiError(400, "Failed to fetch program by ID");
-            }
-        },
         getProgramtype:async (_, { type }) => {
             try {
                 const program=await Program.findOne({type: type});
@@ -49,6 +42,42 @@ export  const resolvers = {
             const programprice=await Program.findOne({price:{ $lt:price }});
             if (!programprice) throw new ApiError(404, "Programwith less price not found");
             return programprice;
+        },
+        getUsers:async ()=>{
+            try {
+                return await User.find();
+            }
+            catch (errorMessage) {
+                console.error(errorMessage);
+                throw new ApiError(400, errorMessage);
+            }
+        },
+        getSchedulers:async ()=>{
+            try {
+                return await Scheduler.find();
+            }
+            catch (errorMessage) {
+                console.error(errorMessage);
+                throw new ApiError(400, errorMessage);
+            }
+        }  ,
+        getEmployees:async ()=>{
+            try {
+                return await Employee.find();
+            }
+            catch (errorMessage) {
+                console.error(errorMessage);
+                throw new ApiError(400, errorMessage);
+            }
+        } ,
+        getAdmins:async ()=>{
+            try {
+                return await User.find();
+            }
+            catch (errorMessage) {
+                console.error(errorMessage);
+                throw new ApiError(400, errorMessage);
+            }
         }
     },
 };

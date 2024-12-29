@@ -3,8 +3,8 @@ import {startStandaloneServer} from "@apollo/server/standalone"
 import {Program}  from "../models/Program.model.js"
 import {ApiError} from "../utils/ApiError.js"
 //types
-import {typeDefs} from "../models/Graphql.user.model.js"
-import { resolvers}from  "../models/Graphql.resolvers.js"
+import {typeDefs} from "../models/Graphql_All.model.js"
+import { resolvers}from "../controllers/Graphql.resolvers.controller.js"
 
 export const Apollo=async()=>
 {
