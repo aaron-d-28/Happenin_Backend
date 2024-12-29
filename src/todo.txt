@@ -1,0 +1,29 @@
+//todo
+2
+fix the graphql thing first
+
+done
+store all the users that has ever existed and have gone to a program in this db table which will have a table that will record the scheduler name,employee name
+,program name and then the user name connect this with the mongo db and store all this info in there
+{
+[first well have to instal postgres then make a db then table name it with appropriate column with primary keys
+table :
+    event id
+    employee id
+    customer_user_id,
+    date,
+    time,
+]
+}
+
+3
+also then research if there is some way to do real time database for the current users thing in mongo db model
+
+4
+decide exactly how r you going to implement the functionality of employees and qr codes
+a programme will hold all the users that were present into the databse (mysql??) no postgres
+
+
+
+
+
