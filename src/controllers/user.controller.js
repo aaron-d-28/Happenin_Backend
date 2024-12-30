@@ -58,7 +58,7 @@ const registeruser = asyncHandler(async (req, res) => {
 
 
   const user=await User.create({
-    username, password, fullname, email, phone, user_location ,userimage:imageurl,DOB
+    username, password, fullname, email, phone, user_location ,userimage:imageurl,DOB:new Date(DOB)
   })
 
   const userfound=await User.findById(user._id).select("-password")

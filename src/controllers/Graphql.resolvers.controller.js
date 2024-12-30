@@ -13,72 +13,212 @@ const fetchPrograms = async (filter, errorMessage) => {
     }
 };
 
-export  const resolvers = {
+export const resolvers = {
     Query: {
         getPrograms: () => fetchPrograms({}, "Failed to fetch programs"),
-        getProgramtype:async (_, { type }) => {
+         getUsers: async () => {
             try {
-                const program=await Program.findOne({type: type});
+                return await User.find();
+            } catch (errorMessage) {
+                console.error(errorMessage);
+                throw new ApiError(400, errorMessage);
+            }
+        },
+        getSchedulers: async () => {
+            try {
+                return await Scheduler.find();
+            } catch (errorMessage) {
+                console.error(errorMessage);
+                throw new ApiError(400, errorMessage);
+            }
+        },
+        getEmployees: async () => {
+            try {
+                return await Employee.find();
+            } catch (errorMessage) {
+                console.error(errorMessage);
+                throw new ApiError(400, errorMessage);
+            }
+        },
+        getAdmins: async () => {
+            try {
+                return await User.find();
+            } catch (errorMessage) {
+                console.error(errorMessage);
+                throw new ApiError(400, errorMessage);
+            }
+        },
+
+        getProgramtype: async (_, {type}) => {
+            try {
+                const program = await Program.find({type: type});
                 if (!program) throw new ApiError(404, "Programtype not found");
                 return program;
-            }
-            catch (error) {
+            } catch (error) {
                 console.error("Error fetching program by ID:", error);
                 throw new ApiError(400, "Failed to fetch program by type");
             }
         },
-        getProgramsuburb:async  (_, { suburb }) =>
-        {
-            const programbysuburb = await Program.findOne({location_suburb:suburb})
+        getProgramsuburb: async (_, {suburb}) => {
+            const programbysuburb = await Program.find({location_suburb: suburb})
             if (!programbysuburb) throw new ApiError(404, "Programsuburb not found");
             return programbysuburb
         },
-        getProgramstate: async (_, { state }) => {
-            const programstate= await Program.findOne({location_state:state});
+        getProgramstate: async (_, {state}) => {
+            const programstate = await Program.find({location_state: state});
             if (!programstate) throw new ApiError(404, "Programstatenot found");
             return programstate;
         },
-        getProgramprice: async (_, { price }) => {
-            const programprice=await Program.findOne({price:{ $lt:price }});
+        getProgramprice: async (_, {price}) => {
+            const programprice = await Program.find({price: {$lt: price}});
             if (!programprice) throw new ApiError(404, "Programwith less price not found");
             return programprice;
         },
-        getUsers:async ()=>{
+        getProgramcity: async (_, {city}) => {
             try {
-                return await User.find();
+                const program=await Program.find({location_city: city});
+                if (!program) throw new ApiError(404, "No city  found with this Program");
+                return program;
             }
-            catch (errorMessage) {
-                console.error(errorMessage);
-                throw new ApiError(400, errorMessage);
+            catch (e) {
+                throw new ApiError(400, `Error found while trying to find program city:${e}`);
             }
         },
-        getSchedulers:async ()=>{
+        getProgrambyScheduler: async (_,{schedulerid})=>{
             try {
-                return await Scheduler.find();
+                const program = await Program.find({programAuthorizerid: schedulerid});
+                if (!program) throw new ApiError(404, `Program not found created by ${schedulerid}`);
+                return program;
             }
-            catch (errorMessage) {
-                console.error(errorMessage);
-                throw new ApiError(400, errorMessage);
+            catch (e) {
+                console.log(`Error found:${e}`)
+                throw new ApiError(400, `Error found while trying to find program scheduler:${e}`);
             }
-        }  ,
-        getEmployees:async ()=>{
+        },
+
+        getUserbycity:async (_, {location_city}) => {
             try {
-                return await Employee.find();
+                const user=await User.find({location_city: location_city});
+                if (!user) throw new ApiError(404, "User not found by location_city");
+                return user;
             }
-            catch (errorMessage) {
-                console.error(errorMessage);
-                throw new ApiError(400, errorMessage);
+            catch (e) {
+                throw new ApiError(400, `Error occured while fetching by city for users${e.message}`);
             }
-        } ,
-        getAdmins:async ()=>{
+        },
+        getUserbysuburb:async (_, {location_suburb}) => {
             try {
-                return await User.find();
+                const userbysuburb=await User.find({location_suburb: location_suburb});
+                if (!userbysuburb) throw new ApiError(404, "User not found by location_suburb");
             }
-            catch (errorMessage) {
-                console.error(errorMessage);
-                throw new ApiError(400, errorMessage);
+            catch (e) {
+                console.log("Error in fetching userbysuburb")
+                throw new ApiError(400,`Error in fetching by user suburb:${e}`)
+            }
+        },
+        getUserbystate:async (_, {location_state}) => {
+            try {
+                const userstate = await User.find({location_state: location_state});
+                if (!userstate) throw new ApiError(404, "User not found by location_state");
+                return userstate;
+            }
+            catch (e) {
+                console.log(`Error in fetching userbystate:${e}`);
+                throw new ApiError(400, `Error in fetching userbystate:${e}`);
+            }
+        },
+        getUserbyDOBmorethan:async (_,{DOB})=>{
+            try {
+                const user=await User.aggregate([
+                    {
+                        $project: {
+                            name: 1,
+                            DOB: 1,
+                            age: {
+                                $floor: {
+                                    $divide: [
+                                        { $subtract: [new Date(), "$DOB"] }, // Current date - DOB
+                                        1000 * 60 * 60 * 24 * 365.25        // Convert milliseconds to years
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $match: {
+                            age: { $gt: 25 }  // Only include users with age greater than 25
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: "$age",  // Group by the calculated age
+                            users: { $push: "$$ROOT" } // Collect all users in the same age group
+                        }
+                    },
+                    {
+                        $project: {
+                            age: "$_id",  // Rename _id to age
+                            users: 1,
+                            _id: 0
+                        }
+                    }
+                ])
+                if (!user) throw new ApiError(404, "User more than that age not found");
+                return user;
+            }
+            catch (e) {
+                console.log(`Error in fetching userbysage:${e}`);
+                throw new ApiError(400, `Error in fetching userbysAge:${e}`);
+            }
+},
+        getUserbyDOBlessthan:async (_,{DOB})=>{
+            try {
+                const user=await User.aggregate([
+                    {
+                        $project: {
+                            name: 1,
+                            DOB: 1,
+                            age: {
+                                $floor: {
+                                    $divide: [
+                                        { $subtract: [new Date(), "$DOB"] }, // Current date - DOB
+                                        1000 * 60 * 60 * 24 * 365.25        // Convert milliseconds to years
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        $match: {
+                            age: { $lt: 25 }  // Only include users with age greater than 25
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: "$age",  // Group by the calculated age
+                            users: { $push: "$$ROOT" } // Collect all users in the same age group
+                        }
+                    },
+                    {
+                        $project: {
+                            age: "$_id",  // Rename _id to age
+                            users: 1,
+                            _id: 0
+                        }
+                    }
+                ])
+                if (!user) throw new ApiError(404, "User less than that age not found");
+                return user;
+            }
+            catch (e) {
+                console.log(`Error in fetching userbysage:${e}`);
+                throw new ApiError(400, `Error in fetching userbysAge:${e}`);
             }
         }
+
+
+
+
     },
 };
 

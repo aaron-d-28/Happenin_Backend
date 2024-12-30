@@ -71,6 +71,8 @@ let EventImgsSrc=""
     }
 
     console.log(`All the uploaded imgsurl are:${EventImgsSrc}`)
+
+
   
     const programcreated=await Program.create({
 
@@ -89,6 +91,19 @@ let EventImgsSrc=""
     if (!programcreated) {
         throw new ApiError(500,"Not able to add the document means cant add the entry")
     }
+    const updatedcheduler=await Scheduler.findByIdAndUpdate(
+        req.scheduler._id,
+        {$set: {programid: programcreated._id}},
+        { new: true }
+
+)
+    if (!updatedcheduler)
+    {
+        console.log(`Updated scheduler error check program:${programcreated._id} then for scheduler:${updatedcheduler}`)
+        throw  new ApiError(400,"Error in updating Scheduler pics",error)
+    }
+
+
     return res
     .status(200)
     .json(new ApiResponse(200,programcreated,"Lesgooooooo created the entryyy!!!!"))

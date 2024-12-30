@@ -25,5 +25,41 @@ a programme will hold all the users that were present into the databse (mysql??)
 
 
 
+db.users.aggregate([
+  {
+    $project: {
+      name: 1,
+      dob: 1,
+      age: {
+        $divide: [
+          { $subtract: [new Date(), "$dob"] }, // Current date - dob
+          1000 * 60 * 60 * 24 * 365.25        // Convert milliseconds to years
+        ]
+      }
+    }
+  }
+])
 
+ getUsersGroupedByCity: async () => {
+      // MongoDB aggregation to group users by location_city
+      const result = await User.aggregate([
+        {
+          $group: {
+            _id: "$location_city", // Group by location_city
+            users: { $push: "$$ROOT" } // Collect all users in the group
+          }
+        },
+        {
+          $project: {
+            city: "$_id", // Rename _id to city
+            users: 1,
+            _id: 0
+          }
+        }
+      ]);
+
+      return result;
+    }
+
+first group by age then more than xyz
 

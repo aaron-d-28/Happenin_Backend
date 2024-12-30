@@ -137,6 +137,10 @@ const registerEmployee = asyncHandler(async (req, res) => {
   if (!Employees) {
     throw new ApiError(500, "Employee couldnt be created");
   }
+  const updateScheduler=await Scheduler.findByIdAndUpdate(req.scheduler.id,{
+    $set: {employeeid:Employees._id},
+  options:{new :true}
+  })
   const createdemployee=await Employee.findById(Employees._id).select(("-password"))
 
   return res

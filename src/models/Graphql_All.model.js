@@ -13,7 +13,7 @@ type Employee {
     id: ID!
     name: String!
     email: String!
-    Schedulerid: ID
+    Schedulerid: ID!
     password: String!
     empimg: String!
     refreshToken: String
@@ -28,22 +28,28 @@ type Scheduler {
     password: String!
     email: String!
     refreshtoken: String
+    programid:ID!
 }
 
 type User {
-    id: ID!
-    username: String!
-    userimage: String
-    fullname: String!
-    gender: Gender!
-    email: String!
-    phone: String!
-    user_location: String!
-    events_visited: [ID!]
-    DOB: String
-    password: String!
-    refreshToken: String
+id: ID!
+username: String!
+userimage: String
+fullname: String!
+gender: Gender!
+email: String!
+phone: String!
+user_location: String!
+pincode: String!
+location_suburb: String!
+location_city: String!
+location_state: String!
+events_visited: [ID!]
+DOB: String
+password: String!
+refreshToken: String
 }
+
 
 enum Gender {
     Male
@@ -80,14 +86,32 @@ type Query {
     getProgramtype(type: Type!): Program
     getProgramsuburb(suburb: String!): Program
     getProgramstate(state: String!): Program
+    getProgramcity(city: String!): Program
     getProgramprice(price: Float!): Program
+    getProgrambyScheduler(schedulerid : String!):Program
     
     getAdmins: [Admin!]!
     getEmployees: [Employee!]!
     getSchedulers: [Scheduler!]!
     getUsers: [User!]!
     
-#    getUserby
+    getUserbycity(location_city: String!): User
+    getUserbysuburb(location_suburb: String!): User
+    getUserbystate(location_state: String!): User
+    getUserbyDOBmorethan(DOB: String!): User
+    getUserbyDOBlessthan(DOB: String!): User
+    
+    getEmployeesidbyScheduler(schedulerid : String!): Scheduler
+    getProgrambyScheduler(schedulerid : String!): Scheduler
+    getAdminbyScheduler(schedulerid : String!): Scheduler
+    
+    getSchedulerbyAdmin(Admin : String!): Admin
+    
+    getScedulersbyEmployee(Employeeid:String): Employee
+    
+    getScedulerbyProgram(programid:String!): Program
+    
 }
 
 `
+//note here we have to create a program record field for mysql too lmao which will include admins and employess and scheduler
