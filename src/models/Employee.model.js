@@ -14,10 +14,10 @@ const EmployeeSchema = new Schema(
             required: [true, "Email is required"],
             trim: true,
         },
-        Schedulerid: {
+        Schedulerid: [{
             type: Schema.Types.ObjectId,
             ref: "Scheduler",
-        },
+        }],
         password: {
             type: String,
             required: [true, "Password is required"],

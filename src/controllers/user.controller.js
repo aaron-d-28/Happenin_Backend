@@ -52,7 +52,7 @@ const registeruser = asyncHandler(async (req, res) => {
     console.log(`Error found : ${error}`);
   }
   if (!imageurl) {
-    throw new ApiError(400, error + " of urli image not found");
+    throw new ApiError(400, `${imageurl} of urli image not found`);
   }
   console.log(`Image is uploaded online at url${imageurl}`);
 

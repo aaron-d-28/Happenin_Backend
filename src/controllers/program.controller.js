@@ -6,8 +6,6 @@ import { Program } from "../models/Program.model.js";
 import { uploadonCloudinary, uploadonCloudinary_multiple } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 const addprogram=asyncHandler(async(req,res)=>{
-    // note add multer and clpudinary to upload program img 
-    // note later work on further things
     const {
         type,
         pincode,
@@ -48,7 +46,7 @@ const addprogram=asyncHandler(async(req,res)=>{
         }
     )
     
-    if (scheduler.type=="Business" && ttlevents===1) {
+    if (scheduler.type=="Business" && ttlevents>=1) {
         throw new ApiError(400,"A business can only add 1 event")
     }
 
@@ -93,14 +91,16 @@ let EventImgsSrc=""
     }
     const updatedcheduler=await Scheduler.findByIdAndUpdate(
         req.scheduler._id,
-        {$set: {programid: programcreated._id}},
+        {$push:{
+                programid:programcreated._id
+            }},
         { new: true }
 
 )
     if (!updatedcheduler)
     {
         console.log(`Updated scheduler error check program:${programcreated._id} then for scheduler:${updatedcheduler}`)
-        throw  new ApiError(400,"Error in updating Scheduler pics",error)
+        throw  new ApiError(400,"Error in updating Scheduler pics")
     }
 
 
@@ -132,12 +132,13 @@ const updateprogram=asyncHandler(async(req,res)=>{
             }
         )
 
-        if (program.programAuthorizerid.toString()!=req.scheduler._id.toString()) {
-            throw new ApiError(400,`${program.programAuthorizerid} and ${req.scheduler._id} dont have that authority`)
-        }
+    if (!program.programAuthorizerid.equals(req.scheduler._id)) {
+        throw new ApiError(400, `${program.programAuthorizerid} and ${req.scheduler._id} don't have that authority`);
+    }
 
 
-        if (!program) {
+
+    if (!program) {
             throw new ApiError(400,`No program with the program ${_id} id `)
         }
 
@@ -160,7 +161,7 @@ const updateprogram=asyncHandler(async(req,res)=>{
 
 
         if (!updatedprogram) {
-        throw new ApiError(500, "Failed to update the program for ",updatedprogram);
+        throw new ApiError(500, "Failed to update the program for ");
         }
 
         res.status(200).json({

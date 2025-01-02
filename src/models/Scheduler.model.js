@@ -30,14 +30,14 @@ const Schedulerschema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Admin",
     },
-    programid: {
+    programid: [{
         type: Schema.Types.ObjectId,
         ref: "Program",
-    },
-    employeeid: {
+    }],
+    employeeid: [{
         type: Schema.Types.ObjectId,
         ref: "Employee",
-    },
+    }],
     password: {
         type: String,
         required: [true, "Password is required"],

@@ -1,14 +1,12 @@
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadonCloudinary } from "../utils/cloudinary.js";
 import { Admin } from "../models/Admin.model.js";
 import { Scheduler } from "../models/Scheduler.model.js";
-import e from "express";
 
 //note this is seen in the admin panel therefore scheduler is set in admin controller
 const test=asyncHandler(async(req,res)=>{
-  const {val}=req.body
+
   console.log(req)
   res.status(200).json(new ApiResponse(200,{},"Connecction success"))
 })
@@ -58,7 +56,7 @@ const GenerateAccessandRefreshToken = async (userId) => {
 };
 
 const Loginadmin = asyncHandler(async (req, res) => {
-  const { email, password, name } = req.body;
+  const { email, password, } = req.body;
 
   if ([email, password].some((item) => item.trim() === "")) {
     throw new ApiError(400, "Name and password is required");
@@ -174,15 +172,17 @@ const addscheduler = asyncHandler(async (req, res) => {
     throw new ApiError(400,"Scheduler isnt created")
   }
 
+
   const admin=await Admin.findByIdAndUpdate(
     req.Admin?._id,
     {$push:{
       appointedschedulerid:schedulercreated._id
-    }}
+    }},
+  {new: true},
   )
 
   if (!admin) {
-    throw new ApiError(400,"Admin not found",admin)
+    throw new ApiError(400,"Admin not found")
   }
 
 
