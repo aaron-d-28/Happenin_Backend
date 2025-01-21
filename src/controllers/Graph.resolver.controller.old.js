@@ -3,6 +3,7 @@ import {ApiError} from "../utils/ApiError.js";
 import {User} from "../models/User.model.js";
 import {Scheduler} from "../models/Scheduler.model.js";
 import {Employee} from "../models/Employee.model.js";
+import {Admin} from "../models/Admin.model.js";
 
 const fetchPrograms = async (filter, errorMessage) => {
     try {
@@ -42,7 +43,7 @@ export const resolvers = {
         },
         getAdmins: async () => {
             try {
-                return await User.find();
+                return await Admin .find();
             } catch (errorMessage) {
                 console.error(errorMessage);
                 throw new ApiError(400, errorMessage);
@@ -226,7 +227,64 @@ export const resolvers = {
                 console.log(`Error found by searching for employees ny scheduler id:${e}`)
                 throw new ApiError(400, `Error in fetching employees:${e}`);
             }
-        }
+        },
+
+        getEmployeesByScheduler: async (_, { schedulerid }) => {
+            try {
+                const employees = await Employee.find({ Schedulerid: { $in: [schedulerid] } });
+                if (!employees || employees.length === 0) throw new ApiError(404, "No employees found for the given scheduler ID");
+                return employees;
+            } catch (e) {
+                console.log(`Error occurred while fetching employees by scheduler ID: ${e}`);
+                throw new ApiError(400, `Error fetching employees: ${e}`);
+            }
+        },
+
+
+        getSchedulerbyProgram: async (_, { programid }) => {
+            try {
+                const schedulers = await Scheduler.find({ programid: { $in: [programid] } });
+                if (!schedulers || schedulers.length === 0) throw new ApiError(404, "No schedulers found for the given program ID");
+                return schedulers;
+            } catch (e) {
+                console.log(`Error occurred while fetching schedulers by program ID: ${e}`);
+                throw new ApiError(400, `Error fetching schedulers: ${e}`);
+            }
+        },
+        getSchedulersbyAdmin: async (_, { Adminid }) => {
+            try {
+                const schedulers = await Scheduler.find({ authorizerid: { $in: [Adminid] } });
+                if (!schedulers || schedulers.length === 0) throw new ApiError(404, "No schedulers found for the given admin ID");
+                return schedulers;
+            } catch (e) {
+                console.log(`Error occurred while fetching schedulers by admin ID: ${e}`);
+                throw new ApiError(400, `Error fetching schedulers: ${e}`);
+            }
+        },
+        getSchedulersbyEmployee: async (_, { Employeeid }) => {
+            try {
+                const schedulers = await Scheduler.find({ employeeid: { $in: [Employeeid] } });
+                if (!schedulers || schedulers.length === 0) throw new ApiError(404, "No schedulers found for the given employee ID");
+                return schedulers;
+            } catch (e) {
+                console.log(`Error occurred while fetching schedulers by employee ID: ${e}`);
+                throw new ApiError(400, `Error fetching schedulers: ${e}`);
+            }
+        },
+
+
+
+        getAdminbyScheduler: async (_, { schedulerid }) => {
+            try {
+                const admins = await Admin.find({ appointedschedulerid: { $in: [schedulerid] } });
+                if (!admins || admins.length === 0) throw new ApiError(404, "No admins found for the given scheduler ID");
+                return admins;
+            } catch (e) {
+                console.log(`Error occurred while fetching admins by scheduler ID: ${e}`);
+                throw new ApiError(400, `Error fetching admins: ${e}`);
+            }
+        },
+
 
 
 

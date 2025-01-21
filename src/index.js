@@ -2,6 +2,7 @@ import express from "express";
 import connectDB from "./db/index.js";
 import dotenv from 'dotenv'
 import {app} from './app.js'
+import {Apollo} from  "./Graphql/Apollo.server.js"
 dotenv.config({
     path:'./.env'
 })

@@ -81,7 +81,7 @@ export const typeDefs = `
     }
 
     type Query {
-        getPrograms: [Program!]!
+        getPrograms: [Program]
         getProgramtype(type: Type!): [Program!]!
         getProgramsuburb(suburb: String!): [Program!]!
         getProgramstate(state: String!): [Program!]!
@@ -100,13 +100,15 @@ export const typeDefs = `
         getUserbyDOBmorethan(Age: String!): [User!]!
         getUserbyDOBlessthan(Age: String!): [User!]!
         getUserByAgeRange(minAge:String!, maxAge:String!): [User!]!
-        getEmployeesidbyScheduler(schedulerid: String!): [Scheduler!]!
-        getProgrambyScheduler(schedulerid: String!): [Scheduler!]!
-        getAdminbyScheduler(schedulerid: String!): [Scheduler!]!
+        getEmployeesidbyScheduler(schedulerid: String!): [Employee!]!
+        getProgrambyScheduler(schedulerid: String!): [Program!]!
+        getAdminbyScheduler(schedulerid: String!): [Admin!]!
 
         getSchedulersbyAdmin(Adminid: String!): [Admin!]!
 
         getSchedulersbyEmployee(Employeeid: String): [Employee!]!
+
+        getEmployeesByScheduler(Scheduerid: String): [Scheduler!]!
 
     }
     `

@@ -26,8 +26,7 @@ app.use("/api/v1/Scheduler",SchedulerrRouter)
 import Programrouter from "./Routes/program.routes.js";
 app.use("/api/v1/Program",Programrouter)
 
+import {userrouter} from "./Routes/user.routes.js"
+app.use("/api/v1/User",userrouter)
 
-// apollo routes
-import {Apollo} from "../src/Graphql/Apollo.server.js"
-app.use("/api/v1/Program/Graphql",Apollo)
 export {app}

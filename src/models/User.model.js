@@ -26,20 +26,16 @@ const userschema = new Schema({
             type: String,
             required: [true, "Email is required"],
             trim: true,
+            unique: [true, "Email is unique"],
         },
         phone: {
             type: String,
             required: [true, "Phone number is required"],
             trim: true,
         },
-        user_location: {
-            type: String,
-            required: [true, "User location is required"],
-            trim: true,
-        },
         pincode: {
             type: String,
-            required: true
+            required: [true,"Pincode is required"],
         },
         location_suburb: {
             type: String,
