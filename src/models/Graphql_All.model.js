@@ -87,18 +87,20 @@ export const typeDefs = `
         getProgramstate(state: String!): [Program!]!
         getProgramcity(city: String!): [Program!]!
         getProgramprice(price: Float!): [Program!]!
-        getSchedulerbyProgram(programid: String!): [Program!]!
+        getSchedulerbyProgram(programid: String!): [Scheduler!]!
 
         getAdmins: [Admin!]!
         getEmployees: [Employee!]!
         getSchedulers: [Scheduler!]!
         getUsers: [User!]!
 
-        getUserbycity(location_city: String!): [User!]!
+        getUserbycity(location_city: String!): [User!]! 
         getUserbysuburb(location_suburb: String!): [User!]!
+
         getUserbystate(location_state: String!): [User!]!
         getUserbyDOBmorethan(Age: String!): [User!]!
         getUserbyDOBlessthan(Age: String!): [User!]!
+       
         getUserByAgeRange(minAge:String!, maxAge:String!): [User!]!
         getEmployeesidbyScheduler(schedulerid: String!): [Employee!]!
         getProgrambyScheduler(schedulerid: String!): [Program!]!
@@ -108,7 +110,7 @@ export const typeDefs = `
 
         getSchedulersbyEmployee(Employeeid: String): [Employee!]!
 
-        getEmployeesByScheduler(Scheduerid: String): [Scheduler!]!
+        getEmployeesByScheduler(Scheduerid: String): [Employee!]!
 
     }
     `

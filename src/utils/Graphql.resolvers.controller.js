@@ -1,9 +1,9 @@
 import { Program } from "../models/Program.model.js";
-import { ApiError } from "../utils/ApiError.js";
+import { ApiError } from "./ApiError.js";
 import { User } from "../models/User.model.js";
 import { Scheduler } from "../models/Scheduler.model.js";
 import { Employee } from "../models/Employee.model.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiResponse } from "./ApiResponse.js";
 
 const fetchPrograms = async (filter, errorMessage) => {
     try {
@@ -152,14 +152,13 @@ export const resolvers = {
         },
         getUserbysuburb: async (_, { location_suburb }) => {
             try {
-                const userbysuburb = await User.find({ location_suburb: location_suburb });
-                if (userbysuburb.length === 0) {
-                    return new ApiResponse(200, [], "No users found for the given suburb");
-                }
-                return new ApiResponse(200, userbysuburb, "User by suburb fetched successfully");
+                const users = await User.find();
+
+                // Ensure an empty array is returned if no users are found
+                return users.length > 0 ? users : [];
             } catch (e) {
-                console.log("Error fetching user by suburb:", e);
-                return new ApiResponse(400, [], `Error fetching users by suburb: ${e}`);
+                console.error("Error fetching users by suburb:", e);
+                throw new ApiError(400, `Error fetching users by suburb: ${e.message}`);
             }
         },
         getUserbystate: async (_, { location_state }) => {

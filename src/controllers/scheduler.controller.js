@@ -108,7 +108,10 @@ const registerEmployee = asyncHandler(async (req, res) => {
   const {email, password,name} = req.body;
 
 
-  if (!email || !password || !name) {
+  if (!(email && password && name)) {
+    console.log(email);
+    console.log(password);
+    console.log(name);
     throw new ApiError(400, "Email and password  and name is required");
   }
 
@@ -121,8 +124,9 @@ const registerEmployee = asyncHandler(async (req, res) => {
   if (!localimgpath) {
     throw new ApiError(400, "img is required");
   }
-  const uploadedurl=uploadonCloudinary(localimgpath)
+  const uploadedurl=await uploadonCloudinary(localimgpath)
   if (!uploadedurl) {
+  console.log(`Url uploaded is${uploadedurl}`);
     throw new ApiError(500, "image couldnt be uploaded");
   }
 
@@ -130,10 +134,11 @@ const registerEmployee = asyncHandler(async (req, res) => {
     email,
     name,
     password,
-    empimg:uploadedurl,
+    empimg:uploadedurl.url,
     Schedulerid: req.scheduler.id
   })
 
+    console.log("Error occured here in cloud")
   if (!Employees) {
     throw new ApiError(500, "Employee couldnt be created");
   }
@@ -149,4 +154,4 @@ const registerEmployee = asyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200,createdemployee,"Employee created successfully"))
 })
-export { logoutscheduler, Loginscheduler };
+export { logoutscheduler, Loginscheduler,registerEmployee };

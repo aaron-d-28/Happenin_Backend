@@ -1,4 +1,11 @@
 //todo
-now use the postgres and make graphql acc to that
+
+
 
 then use controllers and stuff and and make normal routes to that posgtress database
+
+//todo thats skipped
+fix iska logic
+getSchedulerbyProgram not done
+finish get user by doblessthan
+age range

@@ -4,6 +4,7 @@ import {User} from "../models/User.model.js";
 import {Scheduler} from "../models/Scheduler.model.js";
 import {Employee} from "../models/Employee.model.js";
 import {Admin} from "../models/Admin.model.js";
+import {ObjectId} from "mongodb";
 
 const fetchPrograms = async (filter, errorMessage) => {
     try {
@@ -111,6 +112,7 @@ export const resolvers = {
             try {
                 const userbysuburb=await User.find({location_suburb: location_suburb});
                 if (!userbysuburb) throw new ApiError(404, "User not found by location_suburb");
+                return userbysuburb
             }
             catch (e) {
                 console.log("Error in fetching userbysuburb")
@@ -128,7 +130,8 @@ export const resolvers = {
                 throw new ApiError(400, `Error in fetching userbystate:${e}`);
             }
         },
-        getUserbyDOBmorethan:async (_,{DOB})=>{
+        getUserbyDOBmorethan:async (_,{Age})=>{
+
             try {
                 const user=await User.aggregate([
                     {
@@ -147,7 +150,7 @@ export const resolvers = {
                     },
                     {
                         $match: {
-                            age: { $gt: 25 }  // Only include users with age greater than 25
+                            age: { $gt: Age }  // Only include users with age greater than 25
                         }
                     },
                     {
@@ -172,9 +175,9 @@ export const resolvers = {
                 throw new ApiError(400, `Error in fetching userbysAge:${e}`);
             }
         },
-        getUserbyDOBlessthan:async (_,{DOB})=>{
+        getUserbyDOBlessthan: async (_, { Age }) => {
             try {
-                const user=await User.aggregate([
+                const users = await User.aggregate([
                     {
                         $project: {
                             name: 1,
@@ -182,8 +185,8 @@ export const resolvers = {
                             age: {
                                 $floor: {
                                     $divide: [
-                                        { $subtract: [new Date(), "$DOB"] }, // Current date - DOB
-                                        1000 * 60 * 60 * 24 * 365.25        // Convert milliseconds to years
+                                        { $subtract: [new Date(), "$DOB"] }, // Calculate age
+                                        1000 * 60 * 60 * 24 * 365.25 // Convert milliseconds to years
                                     ]
                                 }
                             }
@@ -191,32 +194,18 @@ export const resolvers = {
                     },
                     {
                         $match: {
-                            age: { $lt: 25 }  // Only include users with age greater than 25
-                        }
-                    },
-                    {
-                        $group: {
-                            _id: "$age",  // Group by the calculated age
-                            users: { $push: "$$ROOT" } // Collect all users in the same age group
-                        }
-                    },
-                    {
-                        $project: {
-                            age: "$_id",  // Rename _id to age
-                            users: 1,
-                            _id: 0
+                            age: { $lt: Age } // Include users with age LESS than DOB
                         }
                     }
-                ])
-                if (!user) throw new ApiError(404, "User less than that age not found");
-                return user;
-            }
-            catch (e) {
-                console.log(`Error in fetching userbysage:${e}`);
-                throw new ApiError(400, `Error in fetching userbysAge:${e}`);
+                ]);
+
+                return users.length > 0 ? users : [];
+
+            } catch (e) {
+                console.error(`Error in fetching users by age: ${e}`);
+                throw new ApiError(400, `Error in fetching users by age: ${e.message}`);
             }
         },
-
         getEmployeesidbyScheduler:async (_, {schedulerid}) => {
             try {
                 const Employees=await Employee.find({Schedulerid:schedulerid});
@@ -229,26 +218,44 @@ export const resolvers = {
             }
         },
 
-        getEmployeesByScheduler: async (_, { schedulerid }) => {
+        getEmployeesByScheduler: async (_, { Scheduerid }) => {
             try {
-                const employees = await Employee.find({ Schedulerid: { $in: [schedulerid] } });
-                if (!employees || employees.length === 0) throw new ApiError(404, "No employees found for the given scheduler ID");
+                if (!Scheduerid) {
+                    console.log(`Scheduler with schedulerid:${Scheduerid}`);
+                    throw new ApiError(400, "Scheduler ID is required");
+                }
+
+                // Find employees by scheduler ID
+                const employees = await Employee.find({ Schedulerid: { $in: [Scheduerid] } });
+
+                if (!employees || employees.length === 0) {
+                    throw new ApiError(404, "No employees found for the given scheduler ID");
+                }
+
                 return employees;
             } catch (e) {
-                console.log(`Error occurred while fetching employees by scheduler ID: ${e}`);
-                throw new ApiError(400, `Error fetching employees: ${e}`);
+                console.error(`Error occurred while fetching employees for scheduler ID: ${Scheduerid}`, e);
+                throw new ApiError(400, `Error fetching employees for scheduler ID ${Scheduerid}: ${e.message}`);
             }
         },
 
 
+
         getSchedulerbyProgram: async (_, { programid }) => {
             try {
-                const schedulers = await Scheduler.find({ programid: { $in: [programid] } });
-                if (!schedulers || schedulers.length === 0) throw new ApiError(404, "No schedulers found for the given program ID");
+                // Ensure programid is converted to ObjectId for MongoDB query
+                const schedulers = await Scheduler.find({
+                    programid: { $in: [programid] }  // Use $in to match programid inside an array
+                });
+
+                if (!schedulers || schedulers.length === 0) {
+                    throw new ApiError(404, "No schedulers found for the given program ID");
+                }
+
                 return schedulers;
             } catch (e) {
-                console.log(`Error occurred while fetching schedulers by program ID: ${e}`);
-                throw new ApiError(400, `Error fetching schedulers: ${e}`);
+                console.log(`Error occurred while fetching schedulers by program ID: ${programid}`, e);
+                throw new ApiError(400, `Error fetching schedulers: ${e.message}`);
             }
         },
         getSchedulersbyAdmin: async (_, { Adminid }) => {
@@ -267,7 +274,7 @@ export const resolvers = {
                 if (!schedulers || schedulers.length === 0) throw new ApiError(404, "No schedulers found for the given employee ID");
                 return schedulers;
             } catch (e) {
-                console.log(`Error occurred while fetching schedulers by employee ID: ${e}`);
+                console.log(`Error occurred while fetching schedulers by employee ID: ${Employeeid} for `);
                 throw new ApiError(400, `Error fetching schedulers: ${e}`);
             }
         },
