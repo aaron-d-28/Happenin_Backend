@@ -1,9 +1,9 @@
 import {ApolloServer} from "@apollo/server"
 import {startStandaloneServer} from "@apollo/server/standalone"
-import {Program}  from "../models/Program.model.js"
+import {Program}  from "../models/Mongoose.odm/Program.model.js"
 import {ApiError} from "../utils/ApiError.js"
 //types
-import {typeDefs} from "../models/Graphql_All.model.js"
+import {typeDefs} from "../models/Mongoose.odm/Graphql_All.model.js"
 // import { resolvers}from "../controllers/Graphql.resolvers.controller.js"
 import { resolvers}from "../controllers/Graph.resolver.controller.old.js"
 

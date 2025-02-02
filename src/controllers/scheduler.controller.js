@@ -1,9 +1,9 @@
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { Scheduler } from "../models/Scheduler.model.js";
+import { Scheduler } from "../models/Mongoose.odm/Scheduler.model.js";
 import {uploadonCloudinary} from "../utils/cloudinary.js";
-import {Employee} from "../models/Employee.model.js";
+import {Employee} from "../models/Mongoose.odm/Employee.model.js";
 
 const GenerateAccessandRefreshToken = async (userId) => {
   try {

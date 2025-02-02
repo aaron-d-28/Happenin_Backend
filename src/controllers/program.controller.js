@@ -1,8 +1,8 @@
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { Scheduler } from "../models/Scheduler.model.js";
-import { Program } from "../models/Program.model.js";
+import { Scheduler } from "../models/Mongoose.odm/Scheduler.model.js";
+import { Program } from "../models/Mongoose.odm/Program.model.js";
 import { uploadonCloudinary, uploadonCloudinary_multiple } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 const addprogram=asyncHandler(async(req,res)=>{

@@ -29,4 +29,6 @@ app.use("/api/v1/Program",Programrouter)
 import {userrouter} from "./Routes/user.routes.js"
 app.use("/api/v1/User",userrouter)
 
+import bookingrouter from "./Routes/Bookingrecords.routes.js"
+app.use("/api/v1/Bookingrecords",bookingrouter)
 export {app}

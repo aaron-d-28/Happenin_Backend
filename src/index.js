@@ -3,6 +3,8 @@ import connectDB from "./db/index.js";
 import dotenv from 'dotenv'
 import {app} from './app.js'
 import {Apollo} from  "./Graphql/Apollo.server.js"
+// import {drizzleconnection} from "./db/drizzle.db.js";
+import {drizzle} from "drizzle-orm/node-postgres"
 dotenv.config({
     path:'./.env'
 })
@@ -16,7 +18,6 @@ connectDB()
     console.log("Mongo db connection has failed aaron:",err)
 })
 Apollo()
-
 
 
 

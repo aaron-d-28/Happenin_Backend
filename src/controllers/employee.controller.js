@@ -1,7 +1,7 @@
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { Employee } from "../models/Employee.model.js";
+import { Employee } from "../models/Mongoose.odm/Employee.model.js";
 
 const GenerateAccessandRefreshToken = async (id) => {
     try {

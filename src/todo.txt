@@ -3,6 +3,9 @@
 
 
 then use controllers and stuff and and make normal routes to that posgtress database
+will have to use drizzle or prisma for thus(prisma usually)
+then create rest api routes only first
+then go for graphql routes usually dont do this
 
 //todo thats skipped
 fix iska logic

@@ -1,8 +1,8 @@
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { Admin } from "../models/Admin.model.js";
-import { Scheduler } from "../models/Scheduler.model.js";
+import { Admin } from "../models/Mongoose.odm/Admin.model.js";
+import { Scheduler } from "../models/Mongoose.odm/Scheduler.model.js";
 
 //note this is seen in the admin panel therefore scheduler is set in admin controller
 const test=asyncHandler(async(req,res)=>{

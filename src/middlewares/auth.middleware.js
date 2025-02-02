@@ -1,6 +1,6 @@
-import { User } from "../models/User.model.js";
-import { Admin } from "../models/Admin.model.js";
-import { Scheduler } from "../models/Scheduler.model.js";
+import { User } from "../models/Mongoose.odm/User.model.js";
+import { Admin } from "../models/Mongoose.odm/Admin.model.js";
+import { Scheduler } from "../models/Mongoose.odm/Scheduler.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import JWT from "jsonwebtoken";

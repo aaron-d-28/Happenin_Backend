@@ -1,9 +1,9 @@
-import {Program} from "../models/Program.model.js";
+import {Program} from "../models/Mongoose.odm/Program.model.js";
 import {ApiError} from "../utils/ApiError.js";
-import {User} from "../models/User.model.js";
-import {Scheduler} from "../models/Scheduler.model.js";
-import {Employee} from "../models/Employee.model.js";
-import {Admin} from "../models/Admin.model.js";
+import {User} from "../models/Mongoose.odm/User.model.js";
+import {Scheduler} from "../models/Mongoose.odm/Scheduler.model.js";
+import {Employee} from "../models/Mongoose.odm/Employee.model.js";
+import {Admin} from "../models/Mongoose.odm/Admin.model.js";
 import {ObjectId} from "mongodb";
 
 const fetchPrograms = async (filter, errorMessage) => {

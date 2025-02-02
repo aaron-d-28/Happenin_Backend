@@ -1,10 +1,10 @@
 import {ApiError} from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
 import {asyncHandler} from "../utils/asyncHandler.js";
-import {User} from "../models/User.model.js";
+import {User} from "../models/Mongoose.odm/User.model.js";
 import {upload} from "../middlewares/multer.middleware.js";
 import {uploadonCloudinary} from "../utils/cloudinary.js";
-import {Admin} from "../models/Admin.model.js";
+import {Admin} from "../models/Mongoose.odm/Admin.model.js";
 
 //steps when writing the insert booking remember to enter  +530 for everytime inserted query because it is witout time zone
 // steps rather just use a js library for that time stuff
