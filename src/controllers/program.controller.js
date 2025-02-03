@@ -7,6 +7,7 @@ import { uploadonCloudinary, uploadonCloudinary_multiple } from "../utils/cloudi
 import mongoose from "mongoose";
 const addprogram=asyncHandler(async(req,res)=>{
     const {
+        programname,
         type,
         pincode,
         location_suburb,
@@ -19,6 +20,7 @@ const addprogram=asyncHandler(async(req,res)=>{
         
       [
         { name: "type", value: type },
+        { name: "programname", value: programname },
         { name: "pincode", value: pincode },
         { name: "location_suburb", value: location_suburb },
         { name: "location_city", value: location_city },
@@ -73,7 +75,7 @@ let EventImgsSrc=""
 
   
     const programcreated=await Program.create({
-
+        programname,
         type,
         programAuthorizerid:req.scheduler._id,
         pincode,

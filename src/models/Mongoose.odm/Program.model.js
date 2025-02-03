@@ -1,6 +1,12 @@
 import mongoose, { Schema } from "mongoose";
 
 const programschema = new Schema({
+
+  programname:{
+    type: String,
+    required: [true,"Please enter a valid program name"],
+  },
+
   type: {
     type: String,
     enum: ["Govt", "Business", "Public","Test"],
