@@ -26,6 +26,8 @@ const GenerateAccessandRefreshToken = async (userId) => {
     throw new ApiError(500, "Something went wrong while generating tokes");
   }
 };
+
+
 const Loginscheduler = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -105,13 +107,14 @@ const logoutscheduler = asyncHandler(async (req, res) => {
 });
 
 const registerEmployee = asyncHandler(async (req, res) => {
-  const {email, password,name} = req.body;
+  const {email, password,name,programid} = req.body;
 
 
-  if (!(email && password && name)) {
+  if (!(email && password && name&& programid)) {
     console.log(email);
     console.log(password);
     console.log(name);
+    console.log(programid);
     throw new ApiError(400, "Email and password  and name is required");
   }
 
@@ -135,7 +138,8 @@ const registerEmployee = asyncHandler(async (req, res) => {
     name,
     password,
     empimg:uploadedurl.url,
-    Schedulerid: req.scheduler.id
+    Schedulerid: req.scheduler.id,
+    eventid:programid
   })
 
     console.log("Error occured here in cloud")

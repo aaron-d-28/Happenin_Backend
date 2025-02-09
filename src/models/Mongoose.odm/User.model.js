@@ -6,6 +6,7 @@ const userschema = new Schema({
             type: String,
             required: [true, "Username is required"],
             trim: true,
+            unique: true
         },
         userimage: {
             type: String,

@@ -4,6 +4,7 @@ import { Scheduler } from "../models/Mongoose.odm/Scheduler.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import JWT from "jsonwebtoken";
+import {Employee} from "../models/Mongoose.odm/Employee.model.js";
 
 
 export const  verifyJWT=asyncHandler(async (req,res,next)=>{
@@ -72,6 +73,28 @@ export const  verifyschedulerJWT=asyncHandler(async (req,res,next)=>{
             throw new ApiError(400,"Invalid token")//todo Discuss about frontend
         }
         req.scheduler=user;
+        next()
+    } catch (error) {
+        throw new ApiError(401,error?.message || "Invalid access token")
+    }
+})
+
+
+export const  verifyemployee=asyncHandler(async (req,res,next)=>{
+    try {
+        const token=req.cookies?.accesstoken || req.header("Authorization")?.replace("Bearer ","")
+        if (!token) {
+            throw new ApiError(401,"No such token found??")
+
+        }
+        const decodedToken=JWT.verify(token,process.env.ACCESS_TOKEN_SECRET)
+
+        const user=await Employee.findById(decodedToken?._id).select("-password -refreshToken")
+
+        if (!user) {
+            throw new ApiError(400,"Invalid token")//todo Discuss about frontend
+        }
+        req.employee=user;
         next()
     } catch (error) {
         throw new ApiError(401,error?.message || "Invalid access token")

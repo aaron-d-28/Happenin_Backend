@@ -29,6 +29,10 @@ const EmployeeSchema = new Schema(
         refreshToken: {
             type: String,
         },
+        eventid:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Program"
+        }
     },
     {timestamps: true}
 );

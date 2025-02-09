@@ -62,7 +62,11 @@ export const registeruser = asyncHandler(async (req, res) => {
 
         throw new ApiError(400, "All fields are required");
     }
-
+    const useralready = await User.findOne({username:username});
+    if (useralready) {
+        console.log(`User already exists`);
+        throw new ApiError(400, "User already exists");
+    }
     // Handling image upload
     let imageurl = "";
     let usrimgupload = "";
