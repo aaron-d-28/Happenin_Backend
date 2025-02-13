@@ -1,4 +1,4 @@
-import { addprogram,updateprogram } from "../controllers/program.controller.js";
+import { addprogram,updateprogram, } from "../controllers/program.controller.js";
 import {  Router} from "express";
 import {verifyschedulerJWT} from "../middlewares/auth.middleware.js"
 import { upload } from "../middlewares/multer.middleware.js";

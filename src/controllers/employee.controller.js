@@ -7,8 +7,9 @@ import {bookingRecords} from "../models/Drizzle.odm/eventhistory.model.js";
 import {Postgresdb} from "../db/drizzle.db.js";
 import {and} from "drizzle-orm";
 import {eq} from "drizzle-orm/sql/expressions/conditions";
-import {use} from "bcrypt/promises.js";
+//Simport {use} from "bcrypt/promises.js";
 import e from "express";
+import {Program} from "../models/Mongoose.odm/Program.model.js";
 
 const GenerateAccessandRefreshToken = async (id) => {
     try {
@@ -89,6 +90,16 @@ const Admituser=asyncHandler(async (req, res) => {
 
     const empid=req.employee?._id
 
+    const employeeforevent=await Employee.findById({empid})
+    const event=await Program.findById(employeeforevent.eventid);
+
+    if (!employeeforevent) {
+        throw new ApiError(400, "Employee not found");
+    }
+    if (!event)
+    {
+        throw new ApiError(400, "event  not found");
+    }
     if (!(username&&qrval&&empid))
     {
         console.log(`Username:${username} and qrval:${qrval} and empid:${empid} }`);
@@ -150,6 +161,16 @@ const Admituser=asyncHandler(async (req, res) => {
         catch(err){
         console.log(`Error occurred updatinf record: ${e}`);
         throw new ApiError(500, "cannot update record Error");
+        }
+        if(event.current_users===NaN)
+        {
+            event.current_users=1
+            event.total_users=1
+        }
+        else
+        {
+            event.current_users=event.current_users +1
+            event.total_users=event.total_users +1
         }
 
         return res

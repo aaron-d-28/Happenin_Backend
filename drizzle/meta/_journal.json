@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1738567024505,
+      "tag": "0000_panoramic_shape",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1738567202850,
+      "tag": "0001_lively_human_fly",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1738567474275,
+      "tag": "0002_useful_lockjaw",
+      "breakpoints": true
+    }
+  ]
+}

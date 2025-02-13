@@ -1,0 +1,1 @@
+ALTER TABLE "booking_records" RENAME COLUMN "date_visited" TO "date_to_visit";

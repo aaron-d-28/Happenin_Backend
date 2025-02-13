@@ -1,0 +1,92 @@
+{
+  "id": "516a0c7e-00fc-4e2f-8dd5-1ae3a77ad43e",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.booking_records": {
+      "name": "booking_records",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "varchar(24)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "employee_id": {
+          "name": "employee_id",
+          "type": "varchar(24)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customer_user_id": {
+          "name": "customer_user_id",
+          "type": "varchar(24)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_booked": {
+          "name": "date_booked",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_visited": {
+          "name": "date_visited",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "time": {
+          "name": "time",
+          "type": "time with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time_visited": {
+          "name": "time_visited",
+          "type": "time with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_visited": {
+          "name": "is_visited",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "qr_auth": {
+          "name": "qr_auth",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

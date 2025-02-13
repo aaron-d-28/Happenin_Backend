@@ -73,6 +73,9 @@ const userschema = new Schema({
             type: Date,
             required: [true, "Date of birth is required"],
         },
+        Age:{
+            type: Number,
+        },
         refreshToken: {
             type: String,
         }

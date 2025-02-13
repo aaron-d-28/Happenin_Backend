@@ -4,6 +4,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Scheduler } from "../models/Mongoose.odm/Scheduler.model.js";
 import {uploadonCloudinary} from "../utils/cloudinary.js";
 import {Employee} from "../models/Mongoose.odm/Employee.model.js";
+import {Postgresdb} from "../db/drizzle.db.js";
+import {bookingRecords} from "../models/Drizzle.odm/eventhistory.model.js";
+import {User} from "../models/Mongoose.odm/User.model.js";
 
 const GenerateAccessandRefreshToken = async (userId) => {
   try {
@@ -158,4 +161,238 @@ const registerEmployee = asyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200,createdemployee,"Employee created successfully"))
 })
-export { logoutscheduler, Loginscheduler,registerEmployee };
+
+const getuserdataAge = asyncHandler(async (req, res) => {
+  const { eventid } = req.query;
+  const startage = Number(req.query.startage ?? 0);
+  const endage = Number(req.query.endage ?? 200);
+
+  // Drizzle ORM query to fetch users based on eventId
+  const users = await Postgresdb
+      .select(bookingRecords.customerUserId)  // Select customerUserId
+      .from(bookingRecords)
+      .where(bookingRecords.eventId.eq(eventid));  // Filter by eventId
+
+  if (!users || users.length === 0) {
+    throw new ApiError(400, "No users found for this program");
+  }
+
+  if (!Array.isArray(users)) {
+    throw new Error("Users must be an array");
+  }
+
+  // MongoDB part: Filtering users by age (this part remains unchanged)
+  const userbyage = (await Promise.all(users.map(async (user) => {
+    const userrow = await User.aggregate([
+      {
+        $match: {
+          _id: user._id,  // Match the specific user by their _id
+          Age: { $gt: startage, $lt: endage }  // Age greater than startAge and less than endAge
+        }
+      }
+    ]);
+    return userrow;  // Return the result for each user (which is an array)
+  }))).flat();  // Flatten the result to get rid of nested arrays
+
+  if (!userbyage || userbyage.length === 0) {
+    console.log(`User by age doesn't exist: ${userbyage}`);
+    throw new ApiError(403, "User age doesn't exist");
+  }
+
+  return res
+      .status(200)
+      .json(new ApiResponse(200, userbyage, "Successfully found users by age range"));
+});
+
+const getuserdatacity = asyncHandler(async (req, res) => {
+  const { cityname, eventid } = req.body;
+
+  if (!cityname || !eventid) {
+    console.log(`No cityname given: ${cityname}`);
+    throw new ApiError(400, "City name or event ID is missing");
+  }
+
+  // Query users from bookingRecords by eventId using Drizzle ORM
+  const users = await Postgresdb
+      .select(bookingRecords.customerUserId)  // Correct field for selecting customerUserId
+      .from(bookingRecords)
+      .where(bookingRecords.eventId.eq(eventid));  // Filter by eventId
+
+  if (!users || users.length === 0) {
+    throw new ApiError(400, "No users found for this program");
+  }
+
+  if (!Array.isArray(users)) {
+    throw new Error("Users must be an array");
+  }
+
+  // MongoDB query to filter users based on location_city
+  const userbycity = (await Promise.all(users.map(async (user) => {
+    const userrow = await User.aggregate([
+      {
+        $match: {
+          _id: user.customerUserId,  // Match by customerUserId
+          location_city: cityname     // Match by the city name
+        }
+      }
+    ]);
+
+    return userrow;  // Return the result for each user (which is an array)
+  }))).flat();  // Flatten the result to get rid of nested arrays
+
+  if (!userbycity || userbycity.length === 0) {
+    console.log(`User by city doesn't exist: ${userbycity}`);
+    throw new ApiError(403, "No users found for this city");
+  }
+
+  return res
+      .status(200)
+      .json(new ApiResponse(200, userbycity, "Successfully found users by city"));
+});
+
+const getUsersByGender = asyncHandler(async (req, res) => {
+  const { gender, eventid } = req.body;
+
+  if (!gender || !eventid) {
+    throw new ApiError(400, "Gender or event ID is missing");
+  }
+
+  // Fetch users based on eventId using Drizzle ORM
+  const users = await Postgresdb
+      .select(bookingRecords.customerUserId) // Select customerUserId
+      .from(bookingRecords)
+      .where(bookingRecords.eventId.eq(eventid)); // Filter by eventId
+
+  if (!users || users.length === 0) {
+    throw new ApiError(400, "No users found for this program");
+  }
+
+  if (!Array.isArray(users)) {
+    throw new Error("Users must be an array");
+  }
+
+
+  // MongoDB query: Filter users by gender using aggregate
+  const userResults = await Promise.all(users.map(async (user) => {
+    const userrow = await User.aggregate([
+      {
+        $match: {
+          _id: user.customerUserId, // Use customerUserId to match in MongoDB
+          gender: gender             // Filter by gender
+        }
+      }
+    ]);
+    return userrow; // Return the result (which is an array)
+  }));
+
+  // Flatten the results to eliminate nested arrays
+  const usergender = userResults.flat();
+
+  if (!usergender || usergender.length === 0) {
+    throw new ApiError(403, `No users found for gender: ${gender}`);
+  }
+
+  // Return the filtered users by gender
+  return res.status(200).json(new ApiResponse(200, usergender, "Successfully found users by gender"));
+});
+
+const getUsersByState = asyncHandler(async (req, res) => {
+  const { state, eventid } = req.body; // Assuming state and eventid are sent in the request body
+
+  if (!state || !eventid) {
+    throw new ApiError(400, "State or event ID is missing");
+  }
+
+  // Fetch users based on eventId using Drizzle ORM
+  const users = await Postgresdb
+      .select(bookingRecords.customerUserId) // Select only the customerUserId field
+      .from(bookingRecords)
+      .where(bookingRecords.eventId.eq(eventid)); // Filter by eventId
+
+  if (!users || users.length === 0) {
+    throw new ApiError(400, "No users found for this program");
+  }
+
+  if (!Array.isArray(users)) {
+    throw new Error("Users must be an array");
+  }
+
+  // MongoDB query: Filter users by location_state using aggregate
+  const userResults = await Promise.all(users.map(async (user) => {
+    const userrow = await User.aggregate([
+      {
+        $match: {
+          _id: user.customerUserId,  // Match the specific user by their customerUserId
+          location_state: state       // Filter by state
+        }
+      }
+    ]);
+    return userrow; // Return the result (which is an array)
+  }));
+
+  // Flatten the results to eliminate nested arrays
+  const usersByState = userResults.flat(); // Renamed to be more descriptive
+
+  if (!usersByState || usersByState.length === 0) {
+    throw new ApiError(403, `No users found for state: ${state}`);
+  }
+
+  // Send the response with the filtered users
+  return res.status(200).json(new ApiResponse(200, usersByState, "Successfully found users by state"));
+});
+
+const getUsersBySuburb = asyncHandler(async (req, res) => {
+  const { suburb, eventid } = req.body; // Assuming suburb and eventid are sent in the request body
+
+  if (!suburb || !eventid) {
+    throw new ApiError(400, "Suburb or event ID is missing");
+  }
+
+  // Fetch users based on eventId using Drizzle ORM
+  const users = await Postgresdb
+      .select(bookingRecords.customerUserId) // Select only the customerUserId field
+      .from(bookingRecords)
+      .where(bookingRecords.eventId.eq(eventid)); // Filter by eventId
+
+  if (!users || users.length === 0) {
+    throw new ApiError(400, "No users found for this program");
+  }
+
+  if (!Array.isArray(users)) {
+    throw new Error("Users must be an array");
+  }
+
+  // MongoDB query: Filter users by location_suburb using aggregate
+  const userResults = await Promise.all(users.map(async (user) => {
+    const userrow = await User.aggregate([
+      {
+        $match: {
+          _id: user.customerUserId,  // Match the specific user by their customerUserId
+          location_suburb: suburb    // Filter by location_suburb
+        }
+      }
+    ]);
+    return userrow; // Return the result (which is an array)
+  }));
+
+  // Flatten the results to eliminate nested arrays
+  const usersBySuburb = userResults.flat();  // Renamed to be more descriptive
+
+  if (!usersBySuburb || usersBySuburb.length === 0) {
+    throw new ApiError(403, `No users found for suburb: ${suburb}`);
+  }
+
+  // Send the response with the filtered users
+  return res.status(200).json(new ApiResponse(200, usersBySuburb, "Successfully found users by suburb"));
+});
+
+export {
+  logoutscheduler,
+  Loginscheduler,
+  registerEmployee,
+  getuserdatacity,
+  getuserdataAge,
+  getUsersByGender,
+  getUsersByState,
+  getUsersBySuburb
+};

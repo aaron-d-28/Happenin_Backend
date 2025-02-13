@@ -5,6 +5,7 @@ import {User} from "../models/Mongoose.odm/User.model.js";
 import {upload} from "../middlewares/multer.middleware.js";
 import {uploadonCloudinary} from "../utils/cloudinary.js";
 import {Admin} from "../models/Mongoose.odm/Admin.model.js";
+import {calculateAge} from "../utils/Qr_gen/Calculateage.js";
 
 //steps when writing the insert booking remember to enter  +530 for everytime inserted query because it is witout time zone
 // steps rather just use a js library for that time stuff
@@ -27,7 +28,7 @@ const GenerateAccessandRefreshToken = async (userId) => {
         throw new ApiError(500, "Something went wrong while generating tokes");
     }
 };
-export const registeruser = asyncHandler(async (req, res) => {
+ const registeruser = asyncHandler(async (req, res) => {
     const {
         username,
         password,
@@ -86,7 +87,7 @@ export const registeruser = asyncHandler(async (req, res) => {
         }
         console.log(`Image is uploaded online at url: ${imageurl}`);
     }
-
+export
     // Ensure DOB is a valid date
     let dobParsed = new Date(DOB);
     if (isNaN(dobParsed)) {
@@ -120,7 +121,7 @@ export const registeruser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, userfound, "User created successfully yayy!!"));
 });
 
-export const loginuser = asyncHandler(async (req, res) => {
+ const loginuser = asyncHandler(async (req, res) => {
     const {email, password} = req.body
 
     const userfound = await User.findOne({email: email})
@@ -140,6 +141,24 @@ export const loginuser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Error in creation of user")
     }
 
+
+     const calAge = calculateAge(currentloggedinuser.Dob);
+     console.log(`Age of the user is: ${calAge}`);
+
+// Check if the calculated age is valid
+     if (isNaN(calAge) || calAge < 0) {
+         throw new ApiError(400, "Error in calculation of user age");
+     }
+
+// Find the user by ID and update the Age field
+     const updatedUser = await User.findById(currentloggedinuser._id);
+     updatedUser.Age = calAge;  // Set the calculated age
+     await updatedUser.save();   // Save the updated user document
+
+     console.log('User age updated successfully');
+
+
+
     const options = {
         httpOnly: true,
         secure: true,
@@ -154,3 +173,4 @@ export const loginuser = asyncHandler(async (req, res) => {
 
 
 })
+export {loginuser,registeruser}

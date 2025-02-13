@@ -213,5 +213,5 @@ const getallSheduler=asyncHandler(async(req,res)=>{
   
 })
 export {
-  addscheduler,Loginadmin,Logoutadmin,test,addadmintest,getallSheduler
+  addscheduler,Loginadmin,Logoutadmin,test,addadmintest,getallSheduler,
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "booking_records" RENAME COLUMN "time" TO "time_booked";
