@@ -13,21 +13,27 @@ const GenerateAccessandRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
         if (!user) {
-            throw new ApiError(404, "user not found");
+            throw new ApiError(404, "User not found");
         }
+
         const accessToken = user.GenerateAccessToken();
         const refreshToken = user.GenerateRefreshToken();
-        if (!accessToken || !refreshToken) {
-            throw new ApiError(400, `Access token is:${accessToken} and refresh token is ${refreshToken}`)
-        }
-        user.refreshToken = refreshToken;
-        await user.save({validateBeforeSave: false});
 
-        return {accessToken, refreshToken};
+        if (!accessToken || !refreshToken) {
+            throw new ApiError(500, "Failed to generate tokens");
+        }
+
+        user.refreshToken = refreshToken;
+        await user.save({ validateBeforeSave: false });
+
+        // console.log(`Refresh token: ${refreshToken} and Access Token: ${accessToken}`);
+        return { accessToken, refreshToken };
     } catch (error) {
-        throw new ApiError(500, "Something went wrong while generating tokes");
+        console.error("Error in GenerateAccessandRefreshToken:", error);
+        throw new ApiError(500, `Something went wrong while generating tokens: ${error.message}`);
     }
 };
+
  const registeruser = asyncHandler(async (req, res) => {
     const {
         username,
@@ -87,7 +93,6 @@ const GenerateAccessandRefreshToken = async (userId) => {
         }
         console.log(`Image is uploaded online at url: ${imageurl}`);
     }
-export
     // Ensure DOB is a valid date
     let dobParsed = new Date(DOB);
     if (isNaN(dobParsed)) {
@@ -128,12 +133,13 @@ export
     if (!userfound) {
         throw new ApiError(400, "Error user not found")
     }
-    const passwordiscorrect = await userfound.isPasswordcorrect(password)
+    const passwordiscorrect = await userfound.isPasswordCorrect(password)
     if (passwordiscorrect) {
         throw new ApiError(400, "Error user password is incorrect")
     }
-    const {accessToken, refreshToken} = GenerateAccessandRefreshToken(userfound._id)
+    const {accessToken, refreshToken} = await GenerateAccessandRefreshToken(userfound._id)
     if (!accessToken || !refreshToken) {
+        console.log(`Access token is${accessToken} and Refresh token is ${refreshToken}`);
         throw new ApiError(400, "Error in creation of tokens")
     }
     const currentloggedinuser = await User.findById(userfound._id).select("-password")
@@ -142,9 +148,10 @@ export
     }
 
 
-     const calAge = calculateAge(currentloggedinuser.Dob);
+     const calAge = calculateAge(currentloggedinuser.DOB);
      console.log(`Age of the user is: ${calAge}`);
 
+    console.log("Working")
 // Check if the calculated age is valid
      if (isNaN(calAge) || calAge < 0) {
          throw new ApiError(400, "Error in calculation of user age");

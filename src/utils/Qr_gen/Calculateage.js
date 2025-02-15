@@ -10,7 +10,7 @@ export const calculateAge=(dob)=> {
     if (month < dob.getMonth() || (month === dob.getMonth() && day < dob.getDate())) {
         age--;
     }
-
+    // console.log(`Age of the user is: ${age}`);
     return age;
 }
 

@@ -1,12 +1,15 @@
-import mongoose, {Schema} from "mongoose";
-import bcrypt from "bcryptjs"
+import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-const userschema = new Schema({
+// Define the user schema
+const userschema = new Schema(
+    {
         username: {
             type: String,
             required: [true, "Username is required"],
             trim: true,
-            unique: true
+            unique: true,
         },
         userimage: {
             type: String,
@@ -36,28 +39,28 @@ const userschema = new Schema({
         },
         pincode: {
             type: String,
-            required: [true,"Pincode is required"],
+            required: [true, "Pincode is required"],
         },
         location_suburb: {
             type: String,
             required: [true, "Suburb location is required"],
             trim: true,
             index: true,
-            lowercase: true
+            lowercase: true,
         },
         location_city: {
             type: String,
             required: [true, "City location is required"],
             trim: true,
             index: true,
-            lowercase: true
+            lowercase: true,
         },
         location_state: {
             type: String,
             required: [true, "State location is required"],
             trim: true,
             index: true,
-            lowercase: true
+            lowercase: true,
         },
         events_visited: [
             {
@@ -73,27 +76,67 @@ const userschema = new Schema({
             type: Date,
             required: [true, "Date of birth is required"],
         },
-        Age:{
+        Age: {
             type: Number,
         },
         refreshToken: {
             type: String,
-        }
+        },
     },
-    {timestamps: true}
+    { timestamps: true }
 );
+
+// Middleware to hash the password before saving
 userschema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
-    // console.log("Plain password:", this.password);  // Check the value of `this.password`
+
     try {
-        this.password = await bcrypt.hash(this.password, 10);
+        const salt = await bcrypt.genSalt(10); // Generate a salt
+        this.password = await bcrypt.hash(this.password, salt); // Hash the password with the salt
         next();
     } catch (error) {
         next(error);
     }
 });
 
-userschema.methods.isPasswordcorrect = async function (password) {
+// Method to compare passwords
+userschema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password);
 };
+
+// Method to generate an access token
+userschema.methods.GenerateAccessToken = function () {
+    try {
+        return jwt.sign(
+            {
+                _id: this._id,
+                email: this.email,
+                username: this.username,
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+        );
+    } catch (error) {
+        console.error("Error in access token generation:", error);
+        throw error; // Propagate the error to the caller
+    }
+};
+
+// Method to generate a refresh token
+userschema.methods.GenerateRefreshToken = function () {
+    try {
+        return jwt.sign(
+            {
+                _id: this._id,
+            },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+        );
+    } catch (error) {
+        console.error("Error in refresh token generation:", error);
+        throw error; // Propagate the error to the caller
+    }
+};
+
+// Export the User model
 export const User = mongoose.model("User", userschema);

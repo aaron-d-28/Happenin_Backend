@@ -80,4 +80,6 @@ adminschema.methods.GenerateRefreshToken=function(){
    }
 
 }
+
+
 export const Admin=mongoose.model("Admin",adminschema)
