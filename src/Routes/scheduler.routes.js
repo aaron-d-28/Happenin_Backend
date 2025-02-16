@@ -1,5 +1,15 @@
 import { Router } from "express";
-import { Loginscheduler,logoutscheduler,registerEmployee, getUsersByGender,getuserdataAge,getUsersBySuburb,getUsersByState,getuserdatacity} from "../controllers/scheduler.controller.js";
+import {
+    Loginscheduler,
+    logoutscheduler,
+    registerEmployee,
+    getUsersByGender,
+    getuserdataAge,
+    getUsersBySuburb,
+    getUsersByState,
+    getuserdatacity,
+    getuserdatacityxl, getUserDataByStateXL, getUserDataBySuburbXL, getUserDataByGenderXL, getUserDataByAgeXL
+} from "../controllers/scheduler.controller.js";
 import { verifyschedulerJWT } from "../middlewares/auth.middleware.js";
 import {upload} from "../middlewares/multer.middleware.js";
 
@@ -15,10 +25,15 @@ SchedulerrRouter.route("/add").post(verifyschedulerJWT,
                                                                         upload.single( "img"),
                                                                         registerEmployee)
 //note thid below make sure u have 2 arguments 1 min range or 1 max range or else keep it empty
-SchedulerrRouter.route("/userdataAge").post(verifyschedulerJWT,getuserdataAge)
-SchedulerrRouter.route("/userdataCity").post(verifyschedulerJWT,getuserdatacity)
-SchedulerrRouter.route("/userdataState").post(verifyschedulerJWT,getUsersByState)
-SchedulerrRouter.route("/userdataSuburb").post(verifyschedulerJWT,getUsersBySuburb)
-SchedulerrRouter.route("/userdataGender").post(verifyschedulerJWT,getUsersByGender)
+SchedulerrRouter.route("/userdataAge").get(verifyschedulerJWT,getuserdataAge)
+SchedulerrRouter.route("/userdataCity").get(verifyschedulerJWT,getuserdatacity)
+SchedulerrRouter.route("/userdataState").get(verifyschedulerJWT,getUsersByState)
+SchedulerrRouter.route("/userdataSuburb").get(verifyschedulerJWT,getUsersBySuburb)
+SchedulerrRouter.route("/userdataGender").get(verifyschedulerJWT,getUsersByGender)
 
+SchedulerrRouter.route("/userdataCityXL").get(verifyschedulerJWT,getuserdatacityxl)
+SchedulerrRouter.route("/userdataStateXL").get(verifyschedulerJWT,getUserDataByStateXL)
+SchedulerrRouter.route("/userdataSuburbXL").get(verifyschedulerJWT,getUserDataBySuburbXL)
+SchedulerrRouter.route("/userdataGenderXL").get(verifyschedulerJWT,getUserDataByGenderXL)
+SchedulerrRouter.route("/userdataAgeXl").get(verifyschedulerJWT,getUserDataByAgeXL)
 export default SchedulerrRouter
