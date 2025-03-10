@@ -1,6 +1,6 @@
 ---
 
-# 📅 Happenin' Backend
+ 📅 Happenin' Backend
 
 **Happenin'** is a platform that helps users discover events happening around them. This repository contains the backend implementation, providing APIs for event management, user authentication, and payments.
 
